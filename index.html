@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f4f6f1" />
+  <title>Sales dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2310724a'/%3E%3Crect x='7' y='18' width='4' height='8' rx='1' fill='%23b8e36a'/%3E%3Crect x='14' y='13' width='4' height='13' rx='1' fill='%23fff'/%3E%3Crect x='21' y='8' width='4' height='18' rx='1' fill='%23b8e36a'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#" aria-label="Dashboard home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="7" y="18" width="4" height="8" rx="1.5" fill="#b8e36a" />
+            <rect x="14" y="13" width="4" height="13" rx="1.5" fill="#ffffff" />
+            <rect x="21" y="8" width="4" height="18" rx="1.5" fill="#b8e36a" />
+          </svg>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-name" id="brandName">Big Pickle</span>
+          <span class="brand-sub">Sales dashboard</span>
+        </span>
+      </a>
+
+      <div class="topbar-actions">
+        <label class="select-wrap">
+          <span class="visually-hidden">Time period</span>
+          <select id="periodSelect" class="control">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="all">All time</option>
+          </select>
+        </label>
+        <button id="exportBtn" class="btn btn-ghost hide-sm" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
+            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
+          </svg>
+          Export CSV
+        </button>
+        <button id="settingsBtn" class="btn btn-ghost btn-square" type="button" aria-label="Open settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+        <button id="addSaleBtn" class="btn btn-primary" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Add sale
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="demo-banner" id="demoBanner" hidden>
+      <div class="demo-banner-main">
+        <span class="demo-dot" aria-hidden="true"></span>
+        <div>
+          <strong>Sample data is loaded</strong>
+          <p id="demoBannerText">Explore the dashboard, then clear the demo sales when you are ready.</p>
+        </div>
+      </div>
+      <div class="demo-banner-actions">
+        <button id="clearDemoBtn" class="btn btn-ghost btn-sm" type="button">Clear sample data</button>
+        <button id="dismissDemoBtn" class="icon-btn" type="button" aria-label="Dismiss sample data notice">&times;</button>
+      </div>
+    </div>
+
+    <div class="page-heading">
+      <div>
+        <h1>Overview</h1>
+        <p id="periodLabel" class="muted">Last 30 days</p>
+      </div>
+      <span class="save-pill"><span class="save-dot" aria-hidden="true"></span>Saved locally</span>
+    </div>
+
+    <section class="kpis" aria-label="Key metrics">
+      <article class="kpi">
+        <div class="kpi-top">
+          <span class="kpi-label">Revenue</span>
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+          </span>
+        </div>
+        <div class="kpi-value" id="kpiRevenue">$0</div>
+        <div class="kpi-foot"><span class="delta flat" id="deltaRevenue">--</span><span class="kpi-note" id="deltaRevenueNote">vs previous period</span></div>
+      </article>
+
+      <article class="kpi">
+        <div class="kpi-top">
+          <span class="kpi-label">Sales</span>
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 0 1-8 0" /></svg>
+          </span>
+        </div>
+        <div class="kpi-value" id="kpiSales">0</div>
+        <div class="kpi-foot"><span class="delta flat" id="deltaSales">--</span><span class="kpi-note" id="deltaSalesNote">vs previous period</span></div>
+      </article>
+
+      <article class="kpi">
+        <div class="kpi-top">
+          <span class="kpi-label">Average sale</span>
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 17 6-6 4 4 8-8" /><path d="M17 7h4v4" /></svg>
+          </span>
+        </div>
+        <div class="kpi-value" id="kpiAvg">$0</div>
+        <div class="kpi-foot"><span class="delta flat" id="deltaAvg">--</span><span class="kpi-note" id="deltaAvgNote">vs previous period</span></div>
+      </article>
+
+      <article class="kpi kpi--accent">
+        <div class="kpi-top">
+          <span class="kpi-label">Today</span>
+          <span class="kpi-count" id="todayCount">0 sales</span>
+        </div>
+        <div class="kpi-value" id="kpiToday">$0</div>
+        <div class="kpi-foot"><span class="delta flat" id="deltaToday">--</span><span class="kpi-note">vs yesterday</span></div>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="card chart-card">
+        <header class="card-head">
+          <div>
+            <h2>Revenue</h2>
+            <p class="muted" id="chartSubtitle">Daily revenue</p>
+          </div>
+          <div class="chart-total"><span id="chartTotal">$0</span><span>in period</span></div>
+        </header>
+        <div id="chart" class="chart" role="group" aria-label="Revenue chart"></div>
+      </article>
+
+      <article class="card products-card">
+        <header class="card-head">
+          <div>
+            <h2>Top products</h2>
+            <p class="muted">Ranked by revenue</p>
+          </div>
+        </header>
+        <div id="productBreakdown" class="breakdown"></div>
+      </article>
+    </section>
+
+    <section class="card table-card">
+      <header class="card-head table-head">
+        <div>
+          <h2>Sales</h2>
+          <p class="muted" id="salesCountLabel">0 sales</p>
+        </div>
+        <div class="table-tools">
+          <label class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+            <span class="visually-hidden">Search sales</span>
+            <input id="searchInput" type="search" placeholder="Search sales..." autocomplete="off" />
+          </label>
+          <select id="paymentFilter" class="control" aria-label="Filter by payment method">
+            <option value="all">All payments</option>
+            <option value="Card">Card</option>
+            <option value="Cash">Cash</option>
+            <option value="Bank transfer">Bank transfer</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </header>
+
+      <div class="table-wrap">
+        <table class="sales-table" id="salesTable">
+          <thead>
+            <tr>
+              <th scope="col">Date</th>
+              <th scope="col">Product</th>
+              <th scope="col">Customer</th>
+              <th scope="col">Payment</th>
+              <th scope="col" class="num">Amount</th>
+              <th scope="col" class="row-actions"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="salesBody"></tbody>
+        </table>
+
+        <div class="empty" id="emptyState" hidden>
+          <svg class="empty-art" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <rect x="4" y="4" width="56" height="56" rx="16" fill="#eef6ea" />
+            <rect x="18" y="34" width="6" height="12" rx="2" fill="#b8e36a" />
+            <rect x="29" y="26" width="6" height="20" rx="2" fill="#10724a" />
+            <rect x="40" y="18" width="6" height="28" rx="2" fill="#b8e36a" />
+          </svg>
+          <h3 id="emptyTitle">No sales yet</h3>
+          <p id="emptyText">Record your first sale to start seeing totals, trends and top products.</p>
+          <div class="empty-actions">
+            <button id="emptyAddBtn" class="btn btn-primary btn-sm" type="button">Add a sale</button>
+            <button id="emptyClearBtn" class="btn btn-ghost btn-sm" type="button" hidden>Clear filters</button>
+            <button id="emptyAllBtn" class="btn btn-ghost btn-sm" type="button" hidden>View all time</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Your data is stored in this browser only.</span>
+    <span id="footerBrand">Big Pickle</span>
+  </footer>
+
+  <dialog id="saleDialog" class="dialog" aria-labelledby="saleDialogTitle">
+    <form id="saleForm" novalidate>
+      <header class="dialog-head">
+        <div>
+          <h2 id="saleDialogTitle">Add a sale</h2>
+          <p class="muted">Record a new transaction.</p>
+        </div>
+        <button type="button" class="icon-btn" data-close aria-label="Close dialog">&times;</button>
+      </header>
+      <div class="dialog-body">
+        <div class="form-grid">
+          <div class="field field-full">
+            <label for="saleAmount">Amount</label>
+            <div class="money-field">
+              <span id="amountCurrency">$</span>
+              <input id="saleAmount" name="amount" type="number" inputmode="decimal" step="0.01" min="0.01" placeholder="0.00" required />
+            </div>
+          </div>
+          <div class="field">
+            <label for="saleDate">Date</label>
+            <input id="saleDate" name="date" type="date" required />
+          </div>
+          <div class="field">
+            <label for="salePayment">Payment method</label>
+            <select id="salePayment" name="payment">
+              <option>Card</option>
+              <option>Cash</option>
+              <option>Bank transfer</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field field-full">
+            <label for="saleProduct">Product or service</label>
+            <input id="saleProduct" name="product" list="productOptions" placeholder="e.g. Classic dill jar" maxlength="80" required />
+            <datalist id="productOptions"></datalist>
+          </div>
+          <div class="field field-full">
+            <label for="saleCustomer">Customer <span class="optional">Optional</span></label>
+            <input id="saleCustomer" name="customer" placeholder="Walk-in" maxlength="80" />
+          </div>
+          <div class="field field-full">
+            <label for="saleNotes">Notes <span class="optional">Optional</span></label>
+            <textarea id="saleNotes" name="notes" rows="2" placeholder="Anything worth remembering" maxlength="500"></textarea>
+          </div>
+        </div>
+        <p class="form-error" id="saleError" hidden></p>
+      </div>
+      <footer class="dialog-foot">
+        <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save sale</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog" class="dialog" aria-labelledby="settingsTitle">
+    <form id="settingsForm">
+      <header class="dialog-head">
+        <div>
+          <h2 id="settingsTitle">Settings</h2>
+          <p class="muted">Personalize your dashboard.</p>
+        </div>
+        <button type="button" class="icon-btn" data-close aria-label="Close dialog">&times;</button>
+      </header>
+      <div class="dialog-body">
+        <div class="form-grid">
+          <div class="field field-full">
+            <label for="businessNameInput">Business name</label>
+            <input id="businessNameInput" type="text" maxlength="40" placeholder="Your business" />
+          </div>
+          <div class="field field-full">
+            <label for="currencyInput">Currency</label>
+            <select id="currencyInput">
+              <option value="USD">USD - US Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="GBP">GBP - British Pound</option>
+              <option value="CAD">CAD - Canadian Dollar</option>
+              <option value="AUD">AUD - Australian Dollar</option>
+              <option value="INR">INR - Indian Rupee</option>
+              <option value="JPY">JPY - Japanese Yen</option>
+              <option value="NGN">NGN - Nigerian Naira</option>
+              <option value="ZAR">ZAR - South African Rand</option>
+              <option value="BRL">BRL - Brazilian Real</option>
+              <option value="MXN">MXN - Mexican Peso</option>
+              <option value="AED">AED - UAE Dirham</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-divider"></div>
+        <h3 class="settings-subtitle">Data</h3>
+        <p class="muted settings-note">Sales are saved in this browser. Clearing browser data will remove them, so export a CSV backup when needed.</p>
+        <div class="data-actions">
+          <button type="button" id="settingsExportBtn" class="btn btn-ghost btn-sm">Export CSV</button>
+          <button type="button" id="loadDemoBtn" class="btn btn-ghost btn-sm">Add sample data</button>
+          <button type="button" id="deleteAllBtn" class="btn btn-danger-ghost btn-sm">Delete all sales</button>
+        </div>
+      </div>
+      <footer class="dialog-foot">
+        <button type="button" class="btn btn-ghost" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
